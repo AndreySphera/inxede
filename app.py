@@ -11,17 +11,17 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    students = Student.query.all()
-    teachers = Teacher.query.all()
-    courses = Course.query.all()  # Получение всех курсов из базы данных
-    return render_template('index.html', teachers=teachers, students=students, courses=courses)
+    all_students = Student.query.all()          # Было: students → all_students
+    all_teachers = Teacher.query.all()         # Было: teachers → all_teachers
+    all_courses = Course.query.all()           # Было: courses → all_courses
+    return render_template('index.html', teachers=all_teachers, students=all_students, courses=all_courses)
 
 @app.route('/add_student', methods=['GET', 'POST'])
 def add_student():
     if request.method == 'POST':
-        name = request.form['name']
-        new_student = Student(name=name)
-        db.session.add(new_student)
+        student_name = request.form['name']     # Было: name → student_name
+        student = Student(name=student_name)   # Было: new_student → student
+        db.session.add(student)
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('add_student.html')
@@ -29,24 +29,24 @@ def add_student():
 @app.route('/add_teacher', methods=['GET', 'POST'])
 def add_teacher():
     if request.method == 'POST':
-        name = request.form['name']
-        new_teacher = Teacher(name=name)
-        db.session.add(new_teacher)
+        teacher_name = request.form['name']     # Было: name → teacher_name
+        teacher = Teacher(name=teacher_name)   # Было: new_teacher → teacher
+        db.session.add(teacher)
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('add_teacher.html')
 
 @app.route('/add_course', methods=['GET', 'POST'])
 def add_course():
-    teachers = Teacher.query.all()  # Получаем всех преподавателей для выпадающего списка
+    available_teachers = Teacher.query.all()    # Было: teachers → available_teachers
     if request.method == 'POST':
-        name = request.form['name']
-        teacher_id = request.form['teacher_id']
-        new_course = Course(name=name, teacher_id=teacher_id)
-        db.session.add(new_course)
+        course_name = request.form['name']      # Было: name → course_name
+        selected_teacher_id = request.form['teacher_id']  # Было: teacher_id → selected_teacher_id
+        course = Course(name=course_name, teacher_id=selected_teacher_id)  # Было: new_course → course
+        db.session.add(course)
         db.session.commit()
         return redirect(url_for('index'))
-    return render_template('add_course.html', teachers=teachers)
+    return render_template('add_course.html', teachers=available_teachers)
 
 if __name__ == '__main__':
     app.run(debug=True)
